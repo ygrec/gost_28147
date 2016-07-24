@@ -10,7 +10,7 @@
  **********************************************************************/
 
 #include "crypto_gost_28147_89.h"
-#include "string.h"
+#include <string.h>#include <stdlib.h>
 
 /* Substitution blocks from RFC 4357
  Note: our implementation of gost 28147-89 algorithm
@@ -650,7 +650,7 @@ unsigned int nv_GOST_28147_89_decrypt( const char* p_key, char sz_key, const cha
 
 unsigned int nv_GOST_28147_89_encrypt_same_buf( const char* p_key, char sz_key, char* p_data_in_out, unsigned int sz_data )
 {
-  return nv_GOST_28147_89_encrypt( p_key, sz_key, (const char*)p_data_in_out, p_data_in_out, sz_data );
+	const char *p_data_in = p_data_in_out;	char *p_data_out = (char *)malloc(sz_data);	if(p_data_out == NULL)		return -1;	unsigned int result = nv_GOST_28147_89_encrypt( p_key, sz_key, p_data_in, p_data_out, sz_data );	memmove(p_data_in_out, p_data_out, sz_data);	free(p_data_out);	return result;
 }
 
 /******************************************************************************
@@ -658,8 +658,8 @@ unsigned int nv_GOST_28147_89_encrypt_same_buf( const char* p_key, char sz_key, 
 */
 
 unsigned int nv_GOST_28147_89_decrypt_same_buf( const char* p_key, char sz_key, char* p_data_in_out, unsigned int sz_data )
-{
-  return nv_GOST_28147_89_decrypt( p_key, sz_key, (const char*)p_data_in_out, p_data_in_out, sz_data );
+{	const char *p_data_in = p_data_in_out;	char *p_data_out = malloc(sz_data);	if(p_data_out == NULL)		return -1;
+	unsigned int result = nv_GOST_28147_89_decrypt( p_key, sz_key, p_data_in, p_data_out, sz_data );	memmove(p_data_in_out, p_data_out, sz_data);	free(p_data_out);	return result;
 }
 
 /******************************************************************************
